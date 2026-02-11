@@ -1,15 +1,17 @@
-name: Build & Upload to AutoDevice
+name: Build and Upload to AutoDevice
 
 on:
   push:
     branches: [main]
-  workflow_dispatch:
+  pull_request:
+    branches: [main]
 
 jobs:
-  build:
+  build-and-upload:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -35,10 +37,16 @@ jobs:
           curl -L -o app.tar.gz "$BUILD_URL"
           tar -xzf app.tar.gz
 
-      - name: Upload to AutoDevice
+      - name: Zip .app bundle
         run: |
           APP_PATH=$(find . -name "*.app" -type d | head -1)
-          curl -X POST "https://api.autodevice.io/v1/builds" \
-            -H "Authorization: Bearer ${{ secrets.AUTODEVICE_API_KEY }}" \
-            -F "file=@${APP_PATH}" \
-            -F "platform=ios"
+          APP_NAME=$(basename "$APP_PATH")
+          cd "$(dirname "$APP_PATH")"
+          zip -r "$GITHUB_WORKSPACE/ExpoEASIOSDemo.zip" "$APP_NAME"
+
+      - name: Upload to AutoDevice
+        uses: autodevice/upload-action@main
+        with:
+          api-key: ${{ secrets.AUTODEVICE_API_KEY }}
+          package-name: io.autodevice.expo.eas.ios.demo
+          build-path: ExpoEASIOSDemo.zip
