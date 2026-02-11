@@ -1,15 +1,24 @@
-# expo-eas-ios-ci-demo
+# ExpoEASIOSDemo
 
-Expo iOS CI demo using EAS Build for building Expo apps on iOS
+Expo iOS simulator app built via **EAS Build (cloud)** and uploaded to [AutoDevice](https://autodevice.io).
 
-## Overview
+## Build Method
 
-This repository is a demo project for [AutoDevice](https://autodevice.dev) CI integration.
+- **Platform**: iOS (simulator .app)
+- **Build**: EAS Build (cloud) — builds run on Expo's servers
+- **CI Runner**: `ubuntu-latest`
+- **Profile**: `simulator` (produces iOS simulator build)
 
-## Getting Started
+## Required Secrets
 
-Coming soon.
+| Secret | Description |
+|--------|-------------|
+| `EXPO_TOKEN` | Expo access token for EAS Build authentication |
+| `AUTODEVICE_API_KEY` | AutoDevice API key for uploading builds |
 
-## License
+## Local Development
 
-MIT
+```bash
+npm install
+npx expo start
+```
